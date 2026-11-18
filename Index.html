@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en-GB" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Office of Reconciliation — Register of Confirmed Events</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Fonts: Newsreader (Editorial Serif), Inter (Clean Sans), JetBrains Mono (Archival Serials) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+paper: { 50: '#FBF9F5', 100: '#F3F0E6', 200: '#E4DFD1', 300: '#C9C0AF', 400: '#9E9482' },
+charcoal: { 950: '#0E100F', 900: '#141716', 800: '#1F2422', 700: '#323936', 600: '#4D5652' },
+institutional: { green: '#24342D', greenLight: '#354D42', greenMuted: '#E2E8E5', tobacco: '#634530', tobaccoLight: '#855E42', tobaccoMuted: '#EFEAE3' }
+},
+fontFamily: {
+serif: ['Newsreader', 'Georgia', 'serif'],
+sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+mono: ['JetBrains Mono', 'monospace'],
+},
+letterSpacing: { 'widest-inst': '0.22em', 'wide-inst': '0.14em' }
+}
+}
+}
+</script>
+<style>
+body { background-color: #141716; color: #F3F0E6; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+.paper-grain { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+.cinematic-vignette { box-shadow: inset 0 0 120px rgba(14, 16, 15, 0.7); }
+.ledger-border { border-color: rgba(201, 192, 175, 0.22); }
+.document-slip { background-color: #F3F0E6; color: #141716; border: 1px solid #C9C0AF; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2); }
+.official-stamp { border: 1.5px solid #634530; color: #634530; letter-spacing: 0.18em; font-family: 'JetBrains Mono', monospace; }
+.view-section { display: none; opacity: 0; transition: opacity 0.4s ease-in-out; }
+.view-section.active { display: block; opacity: 1; }
+/* Reduced Motion & Effects Compliance */
+body.reduced-effects *, body.reduced-effects ::before, body.reduced-effects ::after {
+animation-duration: 0.01ms !important;
+animation-iteration-count: 1 !important;
+transition-duration: 0.01ms !important;
+scroll-behavior: auto !important;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #141716; }
+::-webkit-scrollbar-thumb { background: #323936; border-radius: 2px; }
+</style>
+</head>
+<body id="app-body" class="min-h-screen flex flex-col selection:bg-institutional-tobacco selection:text-paper-50">
+<div class="paper-grain" aria-hidden="true"></div>
+<!-- Statutory Top Ticker & Controls -->
+<div class="bg-charcoal-950 text-paper-300 text-[11px] font-mono tracking-wider border-b border-charcoal-800 relative z-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center space-x-3">
+<span class="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+<span id="live-publication-status">09:00 DAILY RELEASE · SERIES LXII · EDITION 22,281</span>
+</div>
+<div class="flex items-center space-x-4">
+<button onclick="toggleReducedEffects()" id="reduced-effects-btn" class="px-2 py-0.5 bg-charcoal-800 hover:bg-charcoal-700 border border-charcoal-700 rounded text-[10px] text-paper-300 transition-colors cursor-pointer" title="Toggle reduced effects">
+REDUCED EFFECTS: OFF
+</button>
+<button onclick="toggleAmbientAudio()" id="ambient-audio-btn" class="px-2.5 py-0.5 bg-charcoal-800 hover:bg-charcoal-700 border border-charcoal-700 rounded text-[10px] text-paper-300 transition-colors cursor-pointer">
+SOUND: OFF
+</button>
+</div>
+</div>
+</div>
+<!-- Header -->
+<header class="bg-charcoal-900/95 backdrop-blur-md border-b ledger-border sticky top-0 z-40">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="py-4 md:py-5 flex items-center justify-between border-b border-charcoal-800">
+<button onclick="navigateTo('home')" class="text-left group focus:outline-none cursor-pointer">
+<div class="flex items-center space-x-3.5">
+<div class="w-10 h-10 md:w-11 md:h-11 border border-charcoal-700 flex items-center justify-center bg-charcoal-800 group-hover:bg-institutional-tobacco group-hover:border-institutional-tobacco transition-colors duration-300 shrink-0">
+<svg class="w-5 h-5 text-paper-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+<rect x="3" y="3" width="18" height="18" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="9" x2="9" y2="21" /><circle cx="15" cy="15" r="2" />
+</svg>
+</div>
+<div>
+<h1 class="font-serif text-lg sm:text-xl md:text-2xl font-normal tracking-wide text-paper-50 uppercase leading-tight">The Office of Reconciliation</h1>
+<p class="font-mono text-[11px] sm:text-xs tracking-widest-inst text-paper-400 uppercase mt-0.5">Register of Confirmed Events</p>
+</div>
+</div>
+</button>
+<div class="flex items-center space-x-6">
+<button id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle Navigation" class="md:hidden p-2.5 border ledger-border rounded bg-charcoal-800 text-paper-100 hover:bg-charcoal-700 cursor-pointer">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="1.5" d="M4 7h16M4 12h16M4 17h16"></path></svg>
+</button>
+</div>
+</div>
+<nav aria-label="Primary Navigation" class="hidden md:flex items-center justify-between py-0">
+<ul class="flex items-center space-x-1 lg:space-x-2">
+<li><button data-nav="home" onclick="navigateTo('home')" class="nav-link px-3.5 py-3 text-xs font-mono tracking-wide-inst uppercase border-b-2 border-institutional-tobacco text-paper-50 font-medium cursor-pointer">Home</button></li>
+<li><button data-nav="register" onclick="navigateTo('register')" class="nav-link px-3.5 py-3 text-xs font-mono tracking-wide-inst uppercase border-b-2 border-transparent text-paper-400 hover:text-paper-100 cursor-pointer">The Register</button></li>
+<li><button data-nav="office" onclick="navigateTo('office')" class="nav-link px-3.5 py-3 text-xs font-mono tracking-wide-inst uppercase border-b-2 border-transparent text-paper-400 hover:text-paper-100 cursor-pointer">The Office</button></li>
+<li><button data-nav="investigations" onclick="navigateTo('investigations')" class="nav-link px-3.5 py-3 text-xs font-mono tracking-wide-inst uppercase border-b-2 border-transparent text-paper-400 hover:text-paper-100 cursor-pointer">Investigations</button></li>
+<li><button data-nav="locations" onclick="navigateTo('locations')" class="nav-link px-3.5 py-3 text-xs font-mono tracking-wide-inst uppercase border-b-2 border-transparent text-paper-400 hover:text-paper-100 cursor-pointer">Locations</button></li>
+<li><button data-nav="personnel" onclick="navigateTo('personnel')" class="nav-link px-3.5 py-3 text-xs font-mono tracking-wide-inst uppercase border-b-2 border-transparent text-paper-400 hover:text-paper-100 cursor-pointer">Personnel</button></li>
+<li><button data-nav="archive" onclick="navigateTo('archive')" class="nav-link px-3.5 py-3 text-xs font-mono tracking-wide-inst uppercase border-b-2 border-transparent text-paper-400 hover:text-paper-100 cursor-pointer">Archive</button></li>
+<li><button data-nav="auditor" onclick="navigateTo('auditor')" class="nav-link px-3.5 py-3 text-xs font-mono tracking-wide-inst uppercase border-b-2 border-transparent text-amber-200 hover:text-paper-100 cursor-pointer">Auditor Log</button></li>
+</ul>
+<button onclick="openSearchModal()" class="px-3 py-1.5 text-xs font-mono text-paper-300 hover:text-paper-50 bg-charcoal-800 border ledger-border rounded cursor-pointer">SERIAL LOOKUP</button>
+</nav>
+</div>
+<!-- Mobile Navigation Drawer -->
+<div id="mobile-menu" class="hidden md:hidden bg-charcoal-900 border-t ledger-border px-4 pt-2 pb-5">
+<ul class="divide-y divide-charcoal-800 font-mono text-xs">
+<li><button onclick="navigateTo('home'); toggleMobileMenu();" class="w-full text-left py-3 uppercase text-paper-50 font-medium">Home</button></li>
+<li><button onclick="navigateTo('register'); toggleMobileMenu();" class="w-full text-left py-3 uppercase text-paper-400">The Register</button></li>
+<li><button onclick="navigateTo('office'); toggleMobileMenu();" class="w-full text-left py-3 uppercase text-paper-400">The Office</button></li>
+<li><button onclick="navigateTo('investigations'); toggleMobileMenu();" class="w-full text-left py-3 uppercase text-paper-400">Investigations</button></li>
+<li><button onclick="navigateTo('locations'); toggleMobileMenu();" class="w-full text-left py-3 uppercase text-paper-400">Locations</button></li>
+<li><button onclick="navigateTo('personnel'); toggleMobileMenu();" class="w-full text-left py-3 uppercase text-paper-400">Personnel</button></li>
+<li><button onclick="navigateTo('archive'); toggleMobileMenu();" class="w-full text-left py-3 uppercase text-paper-400">The Archive</button></li>
+<li><button onclick="navigateTo('auditor'); toggleMobileMenu();" class="w-full text-left py-3 uppercase text-amber-200">Auditor Log</button></li>
+</ul>
+</div>
+</header>
+<!-- MAIN CONTENT CONTAINER -->
+<main class="flex-grow">
+<!-- HOME -->
+<section id="view-home" class="view-section active">
+<div class="relative bg-charcoal-950 text-paper-50 overflow-hidden border-b ledger-border py-20 md:py-32 cinematic-vignette">
+<div class="absolute inset-0 z-0 opacity-25">
+<img src="https://images.unsplash.com/photo-1568667256549-094345857637?auto=format&fit=crop&w=1800&q=85" alt="Aldwych Annex Interior" class="w-full h-full object-cover grayscale contrast-125 scale-105" />
+<div class="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-950/70 to-transparent"></div>
+</div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div class="max-w-4xl space-y-8">
+<div class="inline-flex items-center space-x-3 px-3.5 py-1.5 bg-charcoal-900 border ledger-border rounded-sm">
+<span class="w-2 h-2 rounded-full bg-institutional-tobacco"></span>
+<span class="font-mono text-xs tracking-widest-inst text-paper-300 uppercase">Register Established 1965 · Aldwych Annex · CANON</span>
+</div>
+<h2 class="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light tracking-tight text-paper-50 leading-[1.02]">THE UNRECORDED</h2>
+<blockquote class="pl-6 border-l-2 border-institutional-tobacco max-w-2xl">
+<p class="font-serif italic text-xl sm:text-2xl md:text-3xl text-paper-200 leading-relaxed" id="dynamic-homepage-quote">
+“It lists what happened the day before.”
+</p>
+</blockquote>
+<div class="flex flex-wrap items-center gap-4 pt-4">
+<button onclick="navigateTo('register')" class="px-7 py-3.5 bg-institutional-tobacco hover:bg-institutional-tobaccoLight text-paper-50 font-mono text-xs tracking-wide-inst uppercase rounded-sm shadow-lg cursor-pointer">Consult Today’s 09:00 Register</button>
+<button onclick="navigateTo('auditor')" class="px-7 py-3.5 bg-charcoal-900 hover:bg-charcoal-800 text-amber-200 border ledger-border font-mono text-xs tracking-wide-inst uppercase rounded-sm cursor-pointer">Open Auditor Notes →</button>
+</div>
+</div>
+</div>
+<div class="mt-4 px-4 text-center font-mono text-[10px] text-paper-400">Caption: Aldwych Annex Archival Hallway [PLACEHOLDER] — CANON</div>
+</div>
+<!-- Terminal -->
+<div class="bg-charcoal-900 py-16 md:py-24 border-b ledger-border">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-charcoal-800">
+<div>
+<span class="font-mono text-xs tracking-widest-inst text-amber-200/90 uppercase">Signature Interactive Feature · CANON</span>
+<h3 class="font-serif text-3xl sm:text-4xl text-paper-50 mt-1">The Nine O’Clock Publication Terminal</h3>
+</div>
+<div class="flex items-center space-x-2 font-mono text-xs">
+<button onclick="switchPublicationEdition('today')" id="pub-btn-today" class="px-3.5 py-2 bg-charcoal-800 border border-charcoal-700 text-paper-50 rounded-sm cursor-pointer">2 JUNE (TODAY)</button>
+<button onclick="switchPublicationEdition('yesterday')" id="pub-btn-yesterday" class="px-3.5 py-2 bg-charcoal-900 border border-charcoal-800 text-paper-400 rounded-sm cursor-pointer">1 JUNE</button>
+</div>
+</div>
+<div class="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+<div class="lg:col-span-7">
+<article class="document-slip p-6 sm:p-10 rounded-sm relative">
+<div class="flex flex-wrap items-start justify-between gap-4 pb-6 border-b border-charcoal-800">
+<div>
+<p class="font-mono text-[11px] tracking-widest uppercase text-charcoal-600">Form RCE-09 · CANON</p>
+<h4 class="font-serif text-xl sm:text-2xl text-charcoal-900 mt-1">Office of Reconciliation — Daily Supplement</h4>
+</div>
+<div class="official-stamp px-3 py-1.5 text-xs font-medium uppercase bg-institutional-tobaccoMuted">CLASSIFICATION: ABSENT</div>
+</div>
+<dl class="divide-y divide-paper-300 font-mono text-sm py-2">
+<div class="py-3.5 grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4"><dt class="text-charcoal-600 uppercase text-xs">DATE:</dt><dd class="sm:col-span-2 text-charcoal-900 font-medium">2 JUNE · 09:00:00 BST</dd></div>
+<div class="py-3.5 grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4"><dt class="text-charcoal-600 uppercase text-xs">SERIAL:</dt><dd class="sm:col-span-2 text-charcoal-900">RCE-1998-0602 / [UNALLOCATED BLOCK 4401–6206]</dd></div>
+<div class="py-3.5 grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4"><dt class="text-charcoal-600 uppercase text-xs">CLASS:</dt><dd class="sm:col-span-2 text-institutional-tobacco font-bold">ABSENT</dd></div>
+<div class="py-3.5 grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4"><dt class="text-charcoal-600 uppercase text-xs">TEXT:</dt><dd class="sm:col-span-2 font-serif text-lg sm:text-xl text-charcoal-900 italic">“No event occurred. Consequences ongoing.”</dd></div>
+</dl>
+<div class="mt-6 pt-5 border-t border-paper-300 flex justify-between items-center text-xs font-mono">
+<button onclick="inspectDocument('RCE-1998-0602')" class="text-institutional-tobacco hover:underline font-bold cursor-pointer">INSPECT →</button>
+<button onclick="pinEvidenceFromTerminal('RCE-1998-0602 · ABSENT')" class="text-amber-800 hover:underline cursor-pointer">+ PIN TO LOG</button>
+</div>
+</article>
+</div>
+<div class="lg:col-span-5 space-y-6">
+<div class="p-6 bg-charcoal-800 border border-charcoal-700 rounded-sm space-y-4">
+<div class="font-mono text-xs text-amber-200 uppercase">Reconciliation Ledger · CANON</div>
+<h4 class="font-serif text-2xl text-paper-50">Competing Readings</h4>
+<p class="text-sm text-paper-300">Examine how characters interpret the 1,806 missing serials.</p>
+<button onclick="navigateTo('ledger')" class="text-amber-200 hover:underline font-mono text-xs cursor-pointer">OPEN LEDGER →</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- THE REGISTER -->
+<section id="view-register" class="view-section py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="pb-8 border-b ledger-border flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="font-mono text-xs tracking-widest-inst text-amber-200/90 uppercase">Statutory Publication Archive · CANON</span>
+<h2 class="font-serif text-4xl sm:text-5xl text-paper-50 mt-1">The Register of Confirmed Events</h2>
+</div>
+</div>
+<div class="mt-10 overflow-x-auto bg-charcoal-900 border ledger-border rounded-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b ledger-border font-mono text-xs text-paper-400 bg-charcoal-950 uppercase tracking-wider">
+<th class="py-4 px-4">Serial</th><th class="py-4 px-4">Date</th><th class="py-4 px-4">Classification</th><th class="py-4 px-4">Summary Text</th><th class="py-4 px-4 text-right">Action</th>
+</tr>
+</thead>
+<tbody id="register-table-body" class="divide-y divide-charcoal-800"></tbody>
+</table>
+</div>
+</section>
+<!-- THE OFFICE & MAUREEN PANEL -->
+<section id="view-office" class="view-section py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+<div class="pb-8 border-b ledger-border">
+<span class="font-mono text-xs tracking-widest-inst text-amber-200/90 uppercase">Institutional Framework · CANON</span>
+<h2 class="font-serif text-4xl sm:text-5xl text-paper-50 mt-1">The Office of Reconciliation</h2>
+<p class="mt-3 text-base text-paper-300 max-w-3xl leading-relaxed">
+Established in 1965 by the Confirmed Events Act following the Calder grain-store fire. The first Register had 41 entries; its serials ran to 44, leaving 3 empty gaps. Founding clerk Edith Marr's minute noted proofing clerk disagreements.
+</p>
+</div>
+<!-- Locked Panel -->
+<div class="p-8 bg-charcoal-900 border ledger-border rounded-sm space-y-4">
+<div class="flex items-center justify-between font-mono text-xs text-amber-200">
+<span>RESTRICTED FILE · REF: MF-1965</span>
+<span>LOCKED PANEL (DEMONSTRATION)</span>
+</div>
+<h3 class="font-serif text-2xl text-paper-50">Maureen Fenwick’s Account of 2 June</h3>
+<p class="text-sm text-paper-300 leading-relaxed">The official deposition and transcribed recollection submitted by proofing clerk Maureen Fenwick.</p>
+<div class="p-12 bg-charcoal-950 border border-charcoal-800 rounded text-center text-charcoal-600 font-mono text-xs tracking-widest">
+[ ACCESS RESTRICTED — NO RECORD FOUND IN CURRENT SESSION ]
+</div>
+</div>
+</section>
+<!-- INVESTIGATIONS -->
+<section id="view-investigations" class="view-section py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+<div class="pb-8 border-b ledger-border">
+<span class="font-mono text-xs tracking-widest-inst text-amber-200/90 uppercase">Active Dossier INV-07 · CANON</span>
+<h2 class="font-serif text-4xl sm:text-5xl text-paper-50 mt-1">The Nine O’Clock List</h2>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+<div class="lg:col-span-8 space-y-6 text-paper-300 leading-relaxed font-serif text-lg">
+<p>Item 188 on a Tuesday in October read only "2 June" and vanished the next day. The new fifth classification, ABSENT, subsequently produced: <em>“2 June | Absent | Audit 7 | No event occurred. Consequences ongoing.”</em></p>
+<p>There are 1,806 missing serials: 1,297 singles, 389 in 24 runs, 98 anniversaries across 7 recurring dates, and 22 echoes.</p>
+</div>
+</div>
+</section>
+<!-- LOCATIONS -->
+<section id="view-locations" class="view-section py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+<div class="pb-8 border-b ledger-border">
+<span class="font-mono text-xs tracking-widest-inst text-amber-200/90 uppercase">Regional Gazetteer · CANON</span>
+<h2 class="font-serif text-4xl sm:text-5xl text-paper-50 mt-1">World & Locations</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-charcoal-900 border ledger-border p-8 rounded-sm space-y-4">
+<div class="font-mono text-xs text-amber-200">DUNMERE · NORTHUMBERLAND · CANON</div>
+<h3 class="font-serif text-2xl text-paper-50">The Flood Barrier</h3>
+<p class="text-sm text-paper-300 leading-relaxed">A flood barrier nearly a mile long on the Northumberland coast (north of Amble). Every household has paid a £38 annual levy for 43 years "following the events of 2 June." Maintained by Colm Aird for 31 years.</p>
+<div class="text-[10px] font-mono text-paper-400 pt-2">Caption: Dunmere Concrete Flood Barrier [PLACEHOLDER] — CANON</div>
+</div>
+<div class="bg-charcoal-900 border ledger-border p-8 rounded-sm space-y-4">
+<div class="font-mono text-xs text-amber-200">REGIONAL ASSETS · DEMONSTRATION</div>
+<h3 class="font-serif text-2xl text-paper-50">Vell Junction & Marlowe Mutual</h3>
+<p class="text-sm text-paper-300 leading-relaxed">Includes Vell Junction (a 6:50 that never runs), the St Aldous Wing, Ossery memorial wall (212 names with no death records), and Marlowe Mutual paying 311 policyholders £4,500 a year for "loss on the 17th."</p>
+<div class="text-[10px] font-mono text-paper-400 pt-2">Caption: Vell Junction Signal Post [PLACEHOLDER] — DEMONSTRATION</div>
+</div>
+</div>
+</section>
+<!-- PERSONNEL (MOTIVATIONS & DISAGREEMENTS) -->
+<section id="view-personnel" class="view-section py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+<div class="pb-8 border-b ledger-border">
+<span class="font-mono text-xs tracking-widest-inst text-amber-200/90 uppercase">Establishment Roll · CANON</span>
+<h2 class="font-serif text-4xl sm:text-5xl text-paper-50 mt-1">Personnel & Motivations</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 font-mono text-xs">
+<div class="bg-charcoal-900 border ledger-border p-6 rounded-sm space-y-3">
+<div class="text-amber-200">AUDITOR / NORA</div>
+<div class="font-serif text-lg text-paper-50">Nora</div>
+<p class="font-sans text-xs text-paper-300">Motivated by her mother Margaret's care home costs in Harrogate and the impending Head of Reconciliation post. Disagrees with Odell on whether omissions are administrative or structural.</p>
+</div>
+<div class="bg-charcoal-900 border ledger-border p-6 rounded-sm space-y-3">
+<div class="text-amber-200">SUPERVISOR</div>
+<div class="font-serif text-lg text-paper-50">Gordon Odell</div>
+<p class="font-sans text-xs text-paper-300">Motivated entirely by punctuality so the building opens in the morning. Dismisses anomalies as clerical rounding.</p>
+</div>
+<div class="bg-charcoal-900 border ledger-border p-6 rounded-sm space-y-3">
+<div class="text-amber-200">SENIOR AUDITOR</div>
+<div class="font-serif text-lg text-paper-50">Priya Raman</div>
+<p class="font-sans text-xs text-paper-300">Believes that a confirmation is a decision, not a passive record. Filed formal dissent regarding telemetry dropouts.</p>
+</div>
+<div class="bg-charcoal-900 border ledger-border p-6 rounded-sm space-y-3">
+<div class="text-amber-200">REPOSITORY</div>
+<div class="font-serif text-lg text-paper-50">Hosk</div>
+<p class="font-sans text-xs text-paper-300">Basement veteran of 40 years. Views every empty serial as a place laid for someone arriving late.</p>
+</div>
+<div class="bg-charcoal-900 border ledger-border p-6 rounded-sm space-y-3">
+<div class="text-amber-200">CUSTODIAN</div>
+<div class="font-serif text-lg text-paper-50">Colm Aird</div>
+<p class="font-sans text-xs text-paper-300">Dunmere barrier keeper for 31 years, maintaining concrete against water levels never reached.</p>
+</div>
+</div>
+</section>
+<!-- ARCHIVE & WITNESS TESTIMONY -->
+<section id="view-archive" class="view-section py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+<div class="pb-8 border-b ledger-border">
+<span class="font-mono text-xs tracking-widest-inst text-amber-200/90 uppercase">Aldwych Repository Holdings · CANON</span>
+<h2 class="font-serif text-4xl sm:text-5xl text-paper-50 mt-1">The Archive & Witness Testimonies</h2>
+<p class="text-xs font-mono text-amber-200/80 mt-2">Rule: Opening an ABSENT record makes its linked witness testimony permanently unavailable on later visits.</p>
+</div>
+<div id="archive-items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+</section>
+<!-- RECONCILIATION LEDGER -->
+<section id="view-ledger" class="view-section py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+<div class="pb-8 border-b ledger-border">
+<span class="font-mono text-xs tracking-widest-inst text-amber-200/90 uppercase">Reconciliation Ledger · CANON</span>
+<h2 class="font-serif text-4xl sm:text-5xl text-paper-50 mt-1">Competing Readings & Omitted Links</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 font-mono text-xs">
+<div class="p-6 bg-charcoal-900 border ledger-border rounded-sm space-y-3">
+<div class="text-amber-200 font-bold">READING 01: GORDON ODELL</div>
+<h3 class="font-serif text-xl text-paper-50">Administrative Error</h3>
+<p class="font-sans text-sm text-paper-300">Argues missing serials are clerical oversight in early typesetting.</p>
+</div>
+<div class="p-6 bg-charcoal-900 border ledger-border rounded-sm space-y-3">
+<div class="text-amber-200 font-bold">READING 02: PRIYA RAMAN (DISSENT)</div>
+<h3 class="font-serif text-xl text-paper-50">Systemic Drift</h3>
+<p class="font-sans text-sm text-paper-300">Concludes serial omissions correlate with barometric synchronization dropouts.</p>
+</div>
+</div>
+</section>
+<!-- AUDITOR LOG -->
+<section id="view-auditor" class="view-section py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+<div class="pb-8 border-b ledger-border flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="font-mono text-xs tracking-widest-inst text-amber-200/90 uppercase">Auditor’s Working Notes · DEMONSTRATION</span>
+<h2 class="font-serif text-4xl sm:text-5xl text-paper-50 mt-1">Evidence & Personal Log</h2>
+</div>
+<button onclick="addAuditorNotePrompt()" class="px-5 py-2.5 bg-institutional-tobacco text-paper-50 font-mono text-xs uppercase rounded-sm cursor-pointer">+ Add New Note</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="p-6 bg-charcoal-900 border ledger-border rounded-sm space-y-4">
+<h3 class="font-mono text-xs text-amber-200 uppercase">Pinned Evidence & Serials</h3>
+<div id="auditor-pins-container" class="space-y-3 font-mono text-xs"></div>
+</div>
+<div class="p-6 bg-charcoal-900 border ledger-border rounded-sm space-y-4">
+<h3 class="font-mono text-xs text-amber-200 uppercase">Auditor Journal</h3>
+<div id="auditor-notes-container" class="space-y-4 font-serif text-base text-paper-200"></div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer with Reset Link -->
+<footer class="bg-charcoal-950 border-t ledger-border py-10 mt-20">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-paper-400">
+<div>THE OFFICE OF RECONCILIATION · REGISTER ESTABLISHED 1965</div>
+<div>
+<button onclick="resetArchiveState()" class="text-amber-200 hover:underline cursor-pointer">
+Return to the archive as first published
+</button>
+</div>
+</div>
+</footer>
+<!-- MODALS -->
+<div id="document-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-950/80 backdrop-blur-sm">
+<div class="document-slip max-w-2xl w-full p-8 rounded-sm relative max-h-[90vh] overflow-y-auto space-y-6">
+<div class="flex items-start justify-between pb-4 border-b border-charcoal-300">
+<div>
+<span id="modal-doc-tag" class="font-mono text-xs uppercase text-institutional-tobacco font-bold">CANON</span>
+<h3 id="modal-doc-title" class="font-serif text-2xl text-charcoal-900 mt-0.5">Title</h3>
+</div>
+<button onclick="closeDocumentModal()" class="p-2 text-charcoal-600 font-mono text-xs cursor-pointer">[CLOSE]</button>
+</div>
+<div id="modal-doc-body" class="space-y-4 font-serif text-base text-charcoal-900 leading-relaxed"></div>
+<div class="pt-4 border-t border-charcoal-300 flex justify-between items-center font-mono text-xs">
+<button onclick="pinCurrentModalEvidence()" class="px-4 py-2 bg-institutional-tobacco text-paper-50 rounded cursor-pointer">+ Pin to Log</button>
+<button onclick="closeDocumentModal()" class="px-5 py-2 bg-charcoal-900 text-paper-50 uppercase rounded-sm cursor-pointer">Dismiss</button>
+</div>
+</div>
+</div>
+<div id="toast-notification" class="hidden fixed bottom-6 right-6 z-50 bg-charcoal-900 border border-amber-200/40 text-paper-50 px-5 py-3 rounded shadow-2xl font-mono text-xs flex items-center space-x-3">
+<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+<span id="toast-message">Notification</span>
+</div>
+<script>
+const Store = {
+get(key, fallback) {
+try { const val = localStorage.getItem('unrecorded_' + key); return val !== null ? JSON.parse(val) : fallback; } catch (e) { return fallback; }
+},
+set(key, val) {
+try { localStorage.setItem('unrecorded_' + key, JSON.stringify(val)); } catch (e) {}
+}
+};
+let auditorState = Store.get('auditor_state', {
+openedRecords: [],
+absentVisited: false,
+pinnedEvidence: ['RCE-1998-0602 (ABSENT)', 'Dunmere Levy Roll £38'],
+notes: ['Initial review of Audit 7 ledger discrepancies.'],
+omittedEntryIndex: null
+});
+let reducedEffectsState = Store.get('reduced_effects', false);
+if (reducedEffectsState) document.getElementById('app-body').classList.add('reduced-effects');
+updateReducedEffectsButtonLabel();
+if (auditorState.omittedEntryIndex === null) {
+auditorState.omittedEntryIndex = 2;
+Store.set('auditor_state', auditorState);
+}
+function toggleReducedEffects() {
+reducedEffectsState = !reducedEffectsState;
+Store.set('reduced_effects', reducedEffectsState);
+const body = document.getElementById('app-body');
+if (reducedEffectsState) body.classList.add('reduced-effects');
+else body.classList.remove('reduced-effects');
+updateReducedEffectsButtonLabel();
+showToast(reducedEffectsState ? "Reduced effects enabled." : "Reduced effects disabled.");
+}
+function updateReducedEffectsButtonLabel() {
+const btn = document.getElementById('reduced-effects-btn');
+if (btn) btn.textContent = ⁠REDUCED EFFECTS: ${reducedEffectsState ? 'ON' : 'OFF'}⁠;
+}
+function resetArchiveState() {
+localStorage.clear();
+showToast("Archive state restored to initial publication.");
+setTimeout(() => window.location.reload(), 1000);
+}
+// Ambient audio
+let audioCtx = null, isAudioPlaying = false, audioInterval = null;
+function toggleAmbientAudio() {
+const btn = document.getElementById('ambient-audio-btn');
+if (!isAudioPlaying) {
+try {
+audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+if (audioCtx.state === 'suspended') audioCtx.resume();
+audioInterval = setInterval(() => {
+if (!audioCtx || audioCtx.state !== 'running') return;
+const osc = audioCtx.createOscillator();
+const gain = audioCtx.createGain();
+osc.type = 'sine'; osc.frequency.setValueAtTime(65, audioCtx.currentTime);
+gain.gain.setValueAtTime(0.003, audioCtx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+osc.connect(gain); gain.connect(audioCtx.destination);
+osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+}, 3500);
+isAudioPlaying = true;
+btn.textContent = "SOUND: ON";
+showToast("Ambient atmosphere enabled.");
+} catch (e) { showToast("Audio restricted."); }
+} else {
+if (audioInterval) clearInterval(audioInterval);
+if (audioCtx) audioCtx.close();
+isAudioPlaying = false;
+btn.textContent = "SOUND: OFF";
+}
+}
+const registerEntries = [
+{ serial: 'RCE-1998-0602', date: '2 JUNE', jurisdiction: 'DUNMERE', classification: 'ABSENT', summary: 'No event occurred. Consequences ongoing.', source: 'AUDIT 7', tag: 'CANON', testimonyId: 'testimony-dunmere' },
+{ serial: 'RCE-1998-0601', date: '1 JUNE', jurisdiction: 'HARWICH', classification: 'CONFIRMED', summary: 'Scheduled dredging of outer shipping channel completed.', source: 'HARBOUR BOARD', tag: 'CANON', testimonyId: null },
+{ serial: 'RCE-1998-0530', date: '30 MAY', jurisdiction: 'FENWICK', classification: 'AMENDED', summary: 'Signal box relay replacement recorded; passenger timetable notation struck.', source: 'RAILWAY INSPECTORATE', tag: 'CANON', testimonyId: null },
+{ serial: 'RCE-1998-0528', date: '28 MAY', jurisdiction: 'ALDWYCH', classification: 'CONFIRMED', summary: 'Annual binding of Series LXI Register volumes completed.', source: 'DIRECTORATE OF RECORDS', tag: 'CANON', testimonyId: null },
+{ serial: 'RCE-1998-0519', date: '19 MAY', jurisdiction: 'ST. JUDE', classification: 'AMENDED', summary: 'Barometric trace interrupted between 02:14 and 02:28 GMT.', source: 'TELEMETRY POST 4', tag: 'CANON', testimonyId: 'testimony-stjude' }
+];
+const archiveHoldings = [
+{ id: 'ARC-001', category: 'Historical Registers', code: 'VOL-1965-001', title: 'Inaugural Register of Confirmed Events (Autumn 1965)', date: '14 OCT 1965', tag: 'CANON', excerpt: 'First 09:00 statutory publication with 41 entries. Serials ran to 44 (3 empty).' },
+{ id: 'ARC-002', category: 'Reserved Serial Numbers', code: 'LEDGER-7B', title: 'Withdrawn Serial Sequence Register (Audit 7 Extract)', date: '2 JUNE', tag: 'CANON', excerpt: '1,806 missing serial numbers.' },
+{ id: 'ARC-003', category: 'Dissent Memorandum', code: 'MEMO-RAMAN', title: 'Priya Raman Formal Dissent on Telemetry Synchronization', date: '19 MAY', tag: 'CANON', excerpt: 'Formal dissent: A confirmation is a decision, not a passive record.' }
+];
+let currentInspectModalData = null;
+function renderRegisterTable() {
+const tbody = document.getElementById('register-table-body');
+if (!tbody) return;
+let filtered = [...registerEntries];
+if (!reducedEffectsState && auditorState.omittedEntryIndex !== null && auditorState.omittedEntryIndex < filtered.length) {
+filtered = filtered.filter((_, idx) => idx !== auditorState.omittedEntryIndex);
+}
+tbody.innerHTML = filtered.map(entry => ⁠<tr class="hover:bg-paper-100/80 transition-colors"> <td class="py-4 px-4 font-mono text-xs font-medium text-charcoal-900">${entry.serial}</td> <td class="py-4 px-4 font-mono text-xs text-charcoal-700">${entry.date}</td> <td class="py-4 px-4"><span class="px-2 py-0.5 border font-mono text-[11px]">${entry.classification}</span></td> <td class="py-4 px-4 font-serif text-base text-charcoal-800">${entry.summary}</td> <td class="py-4 px-4 text-right"><button onclick="inspectDocument('${entry.serial}')" class="font-mono text-xs text-institutional-green hover:underline cursor-pointer">INSPECT</button></td> </tr>⁠).join('');
+}
+function renderArchiveItems() {
+const grid = document.getElementById('archive-items-grid');
+if (!grid) return;
+grid.innerHTML = archiveHoldings.map(item => ⁠<article class="document-slip p-6 rounded-sm flex flex-col justify-between"> <div> <div class="flex items-center justify-between font-mono text-xs text-charcoal-500 pb-3 border-b border-paper-200"> <span class="text-institutional-green font-medium">${item.category}</span> <span class="px-2 py-0.5 bg-institutional-tobaccoMuted text-institutional-tobacco">${item.tag}</span> </div> <h3 class="font-serif text-xl text-charcoal-900 mt-4">${item.title}</h3> <p class="mt-2.5 text-sm text-charcoal-600 leading-relaxed">${item.excerpt}</p> </div> <div class="mt-6 pt-4 border-t border-paper-200 flex items-center justify-between font-mono text-xs"> <span>${item.date}</span> <button onclick="inspectArchiveItem('${item.id}')" class="text-charcoal-900 hover:text-institutional-green font-medium cursor-pointer">READ &rarr;</button> </div> </article>⁠).join('');
+}
+function inspectDocument(serial) {
+const entry = registerEntries.find(e => e.serial === serial);
+if (!entry) return;
+currentInspectModalData = entry;
+if (!auditorState.openedRecords.includes(serial)) auditorState.openedRecords.push(serial);
+if (entry.classification === 'ABSENT') {
+auditorState.absentVisited = true;
+if (!reducedEffectsState) entry.testimonyId = null;
+}
+Store.set('auditor_state', auditorState);
+updateAuditorStats();
+checkDynamicHomepageShift();
+document.getElementById('modal-doc-tag').textContent = ⁠${entry.tag} · ${entry.classification}⁠;
+document.getElementById('modal-doc-title').textContent = ⁠${entry.date} — ${entry.jurisdiction}⁠;
+document.getElementById('modal-doc-body').innerHTML = ⁠<div class="p-4 bg-paper-100 border ledger-border font-mono text-xs space-y-2"> <div><span class="text-charcoal-500">SERIAL:</span> ${entry.serial}</div> <div><span class="text-charcoal-500">SUMMARY:</span> "${entry.summary}"</div> </div> ${entry.testimonyId ? '<div class="p-3 bg-paper-100 border ledger-border font-mono text-xs">Witness testimony attached.</div>' : ''}⁠;
+document.getElementById('document-modal').classList.remove('hidden');
+}
+function inspectArchiveItem(id) {
+const item = archiveHoldings.find(a => a.id === id);
+if (!item) return;
+document.getElementById('modal-doc-tag').textContent = item.tag;
+document.getElementById('modal-doc-title').textContent = item.title;
+document.getElementById('modal-doc-body').innerHTML = ⁠<p class="font-serif text-base text-charcoal-900">${item.excerpt}</p>⁠;
+document.getElementById('document-modal').classList.remove('hidden');
+}
+function closeDocumentModal() { document.getElementById('document-modal').classList.add('hidden'); }
+function updateAuditorStats() {
+const pinsContainer = document.getElementById('auditor-pins-container');
+const notesContainer = document.getElementById('auditor-notes-container');
+if (pinsContainer) {
+pinsContainer.innerHTML = auditorState.pinnedEvidence.map(p => ⁠<div class="p-3 bg-charcoal-950 border border-charcoal-800 rounded">📌 ${p}</div>⁠).join('');
+}
+if (notesContainer) {
+notesContainer.innerHTML = auditorState.notes.map(n => ⁠<div class="p-4 bg-charcoal-950 border border-charcoal-800 rounded italic">“${n}”</div>⁠).join('');
+}
+}
+function addAuditorNotePrompt() {
+const note = prompt("Enter new auditor note:");
+if (note && note.trim()) {
+auditorState.notes.push(note.trim());
+Store.set('auditor_state', auditorState);
+updateAuditorStats();
+showToast("Note recorded.");
+}
+}
+function pinCurrentModalEvidence() {
+if (!currentInspectModalData) return;
+const itemText = ⁠${currentInspectModalData.serial} (${currentInspectModalData.classification})⁠;
+if (!auditorState.pinnedEvidence.includes(itemText)) {
+auditorState.pinnedEvidence.push(itemText);
+Store.set('auditor_state', auditorState);
+updateAuditorStats();
+showToast("Pinned to log.");
+}
+closeDocumentModal();
+}
+function pinEvidenceFromTerminal(text) {
+if (!auditorState.pinnedEvidence.includes(text)) {
+auditorState.pinnedEvidence.push(text);
+Store.set('auditor_state', auditorState);
+updateAuditorStats();
+showToast("Pinned to log.");
+}
+}
+function checkDynamicHomepageShift() {
+const quoteEl = document.getElementById('dynamic-homepage-quote');
+if (quoteEl && auditorState.openedRecords.length >= 5 && auditorState.absentVisited) {
+quoteEl.textContent = "“It decides what the day before will be allowed to have been.”";
+}
+}
+function navigateTo(viewId) {
+document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+const target = document.getElementById(⁠view-${viewId}⁠);
+if (target) target.classList.add('active');
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function toggleMobileMenu() {
+document.getElementById('mobile-menu').classList.toggle('hidden');
+}
+function switchPublicationEdition(type) {
+showToast(type === 'today' ? "Loaded 2 June edition." : "Loaded 1 June edition.");
+}
+function showToast(msg) {
+const toast = document.getElementById('toast-notification');
+document.getElementById('toast-message').textContent = msg;
+toast.classList.remove('hidden');
+setTimeout(() => toast.classList.add('hidden'), 3200);
+}
+window.addEventListener('DOMContentLoaded', () => {
+renderRegisterTable();
+renderArchiveItems();
+updateAuditorStats();
+checkDynamicHomepageShift();
+});
+</script>
+</body>
+</html>
